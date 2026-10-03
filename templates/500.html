@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Server Error | Portfolio Platform{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 bg-[#0B0F17] text-gray-100">
+    <div class="max-w-md w-full text-center space-y-6">
+        <div class="inline-flex p-4 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 mb-2">
+            <i data-lucide="alert-triangle" class="w-16 h-16"></i>
+        </div>
+        <h1 class="text-6xl font-extrabold text-white tracking-tight">500</h1>
+        <h2 class="text-2xl font-bold text-gray-200">Server Error Occurred</h2>
+        <p class="text-gray-400 text-sm leading-relaxed">
+            An unexpected error occurred while processing your request. Please try again later or contact the administrator.
+        </p>
+        <div class="pt-4 flex items-center justify-center gap-4">
+            <a href="/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-medium text-sm transition shadow-lg shadow-cyan-500/25">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                Return Home
+            </a>
+            <a href="/dashboard/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 font-medium text-sm transition">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                Admin Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

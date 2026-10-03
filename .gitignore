@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+*.sqlite3
+*.db
+
+# Environment variables
+.env
+.env.local
+
+# Node / Tailwind
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Django static collect
+staticfiles/
+media/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
