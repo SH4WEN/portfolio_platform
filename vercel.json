@@ -1,5 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pip install -r requirements.txt && npm install",
-  "buildCommand": "npm run build:css"
+  "buildCommand": "npm run build:css",
+  "functions": {
+    "config/wsgi.py": {
+      "maxDuration": 30,
+      "includeFiles": "{templates/**/*,certs/**/*}"
+    }
+  }
 }
