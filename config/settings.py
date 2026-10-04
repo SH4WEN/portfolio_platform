@@ -94,6 +94,10 @@ DATABASES = {
         'HOST': tmpPostgres.hostname,
         'PORT': 5432,
         'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
+        'SSL': {
+            'sslmode': 'require',
+            'options': '-c sslrootcert=' + os.path.abspath(os.path.join(BASE_DIR, 'certs', 'ca.pem'))
+        }
     }
 }
 # Database
@@ -145,12 +149,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # WhiteNoise storage configuration
+# NOTE: Use CompressedStaticFilesStorage (not the *Manifest* variant) — the Vercel
+# build pipeline does not run `collectstatic`, and Manifest storage raises
+# "Missing staticfiles manifest entry" errors on every page when DEBUG=False.
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
