@@ -43,7 +43,8 @@ def client_create_view(request):
         
     return render(request, 'dashboard/clients/form.html', {
         'form': form,
-        'action': 'Create'
+        'action': 'Create',
+        'gallery_images': [],
     })
 
 @login_required
@@ -80,11 +81,17 @@ def client_edit_view(request, pk):
             messages.error(request, "Please correct the errors in the form.")
     else:
         form = ClientForm(instance=client)
-        
+
+    gallery_images = PortfolioFile.objects.filter(
+        client=client,
+        cloudinary_resource_type='image',
+    ).order_by('-uploaded_at')
+
     return render(request, 'dashboard/clients/form.html', {
         'form': form,
         'client': client,
-        'action': 'Edit'
+        'action': 'Edit',
+        'gallery_images': gallery_images,
     })
 
 @login_required

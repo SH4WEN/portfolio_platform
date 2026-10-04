@@ -99,57 +99,566 @@ action }} Client Portfolio{% endblock %} {% block dashboard_content %}
           {% endif %}
         </div>
 
-        <!-- Profile Image URL -->
+        <!-- Profile Image Picker -->
         <div class="md:col-span-2">
           <label
-            for="{{ form.profile_image_url.id_for_label }}"
             class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >Profile Image URL (Cloudinary or External)</label
           >
+            Profile Photo
+          </label>
+
+          <!-- Hidden URL field that gets submitted with the form -->
           {{ form.profile_image_url }}
-          <p class="text-[11px] text-gray-400 mt-1">
-            Tip: You can also upload images directly via the File Manager.
-          </p>
+
+          <!-- Image Picker Card -->
+          <div
+            class="mt-3 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-50 dark:bg-[#0e1420]"
+          >
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-200 dark:border-gray-700">
+              <button
+                type="button"
+                id="tab-upload"
+                onclick="switchImageTab('upload')"
+                class="img-tab active-img-tab flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition flex items-center justify-center gap-1.5"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-3.5 h-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V4m0 0L8 8m4-4l4 4"
+                  />
+                </svg>
+                Upload from PC
+              </button>
+              <button
+                type="button"
+                id="tab-gallery"
+                onclick="switchImageTab('gallery')"
+                class="img-tab flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition flex items-center justify-center gap-1.5"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-3.5 h-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4 16l4-4 4 4 4-6 4 6M3 6h18M3 20h18"
+                  />
+                </svg>
+                Client Gallery {% if gallery_images %}<span
+                  class="bg-cyan-500 text-white text-[10px] rounded-full px-1.5 py-0.5 leading-none"
+                  >{{ gallery_images|length }}</span
+                >{% endif %}
+              </button>
+            </div>
+
+            <!-- Upload Panel -->
+            <div id="panel-upload" class="img-panel p-5">
+              <div
+                id="upload-drop-zone"
+                class="relative flex flex-col items-center justify-center gap-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl py-8 px-4 cursor-pointer hover:border-cyan-400 transition-colors"
+                onclick="document.getElementById('local-image-input').click()"
+                ondragover="
+                  event.preventDefault();
+                  this.classList.add(
+                    'border-cyan-400',
+                    'bg-cyan-50',
+                    'dark:bg-cyan-950/30',
+                  );
+                "
+                ondragleave="
+                  this.classList.remove(
+                    'border-cyan-400',
+                    'bg-cyan-50',
+                    'dark:bg-cyan-950/30',
+                  )
+                "
+                ondrop="handleImageDrop(event)"
+              >
+                <div
+                  class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-6 h-6 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 16.5V19a2 2 0 002 2h14a2 2 0 002-2v-2.5M16 12l-4-4-4 4m4-4v9"
+                    />
+                  </svg>
+                </div>
+                <div class="text-center">
+                  <p
+                    class="text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  >
+                    Click or drag &amp; drop an image here
+                  </p>
+                  <p class="text-xs text-gray-400 mt-0.5">
+                    JPG, PNG, WEBP, GIF — max 10 MB
+                  </p>
+                </div>
+                <input
+                  type="file"
+                  id="local-image-input"
+                  accept="image/*"
+                  class="hidden"
+                  onchange="handleLocalImageSelect(event)"
+                />
+              </div>
+
+              <!-- Local preview -->
+              <div
+                id="local-preview-area"
+                class="hidden mt-4 flex items-start gap-4 p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
+              >
+                <img
+                  id="local-preview-img"
+                  src=""
+                  alt="Preview"
+                  class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-600 flex-shrink-0"
+                />
+                <div class="flex-1 min-w-0">
+                  <p
+                    class="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate"
+                    id="local-preview-name"
+                  ></p>
+                  <p class="text-[11px] text-amber-500 mt-1">
+                    ⚠️ This preview uses a local URL. To save permanently,
+                    upload the file via the
+                    <a
+                      href="{% url 'media_manager:file_upload' %}{% if client %}?client_id={{ client.pk }}{% endif %}"
+                      class="underline text-cyan-500"
+                      target="_blank"
+                      >File Manager</a
+                    >
+                    first, then pick it from the Gallery tab.
+                  </p>
+                  <button
+                    type="button"
+                    onclick="clearLocalPreview()"
+                    class="mt-2 text-[11px] text-red-400 hover:text-red-500 transition"
+                  >
+                    ✕ Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gallery Panel -->
+            <div id="panel-gallery" class="img-panel hidden p-5">
+              {% if gallery_images %}
+              <div
+                class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3"
+                id="gallery-grid"
+              >
+                {% for file in gallery_images %}
+                <button
+                  type="button"
+                  data-url="{{ file.cloudinary_url }}"
+                  onclick="selectGalleryImage(this)"
+                  title="{{ file.display_title }}"
+                  class="gallery-thumb group relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-cyan-400 transition focus:outline-none focus:border-cyan-500"
+                >
+                  <img
+                    src="{{ file.cloudinary_url }}"
+                    alt="{{ file.display_title }}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                  />
+                  <div
+                    class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-end p-1.5"
+                  >
+                    <span
+                      class="text-[10px] text-white font-medium leading-tight opacity-0 group-hover:opacity-100 transition line-clamp-2 drop-shadow"
+                      >{{ file.display_title }}</span
+                    >
+                  </div>
+                  <div
+                    class="gallery-check absolute top-1.5 right-1.5 w-5 h-5 bg-cyan-500 rounded-full items-center justify-center hidden"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-3 h-3 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                </button>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div
+                class="flex flex-col items-center justify-center py-10 gap-3 text-center"
+              >
+                <div
+                  class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-6 h-6 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M3 15l6-6 4 4 3-3 5 5" />
+                  </svg>
+                </div>
+                <p
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  No images in gallery yet
+                </p>
+                <a
+                  href="{% url 'media_manager:file_upload' %}{% if client %}?client_id={{ client.pk }}{% endif %}"
+                  class="inline-flex items-center gap-1.5 text-xs text-cyan-500 hover:text-cyan-400 font-semibold transition"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  Upload images via File Manager
+                </a>
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Current Preview Bar (shown when a URL is set) -->
+            <div id="current-image-bar" class="hidden px-5 pb-5">
+              <div
+                class="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl border border-cyan-200 dark:border-cyan-800"
+              >
+                <img
+                  id="current-image-thumb"
+                  src=""
+                  alt="Selected"
+                  class="w-12 h-12 object-cover rounded-lg border border-gray-200 dark:border-gray-600 flex-shrink-0"
+                />
+                <div class="flex-1 min-w-0">
+                  <p
+                    class="text-xs font-semibold text-cyan-600 dark:text-cyan-400"
+                  >
+                    ✓ Profile image selected
+                  </p>
+                  <p
+                    class="text-[11px] text-gray-400 truncate mt-0.5"
+                    id="current-image-url-label"
+                  ></p>
+                </div>
+                <button
+                  type="button"
+                  onclick="clearSelectedImage()"
+                  class="text-[11px] text-red-400 hover:text-red-500 transition flex-shrink-0"
+                >
+                  ✕ Clear
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- end picker card -->
+        </div>
+      </div>
+      <!-- end main grid -->
+
+      <!-- ═══ Social & Contact Links ═══ -->
+      <div
+        class="rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+      >
+        <!-- Section Header -->
+        <div
+          class="px-6 py-4 bg-gray-50 dark:bg-gray-800/60 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 text-cyan-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+          </svg>
+          <h3
+            class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider"
+          >
+            Social & Contact Links
+          </h3>
+          <span class="text-[10px] text-gray-400 font-normal ml-1"
+            >All optional</span
+          >
         </div>
 
-        <!-- GitHub URL -->
-        <div>
-          <label
-            for="{{ form.github_url.id_for_label }}"
-            class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >GitHub Profile URL</label
-          >
-          {{ form.github_url }}
-        </div>
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- GitHub -->
+          <div>
+            <label
+              for="{{ form.github_url.id_for_label }}"
+              class="flex items-center gap-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-gray-700 dark:text-gray-300"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"
+                />
+              </svg>
+              GitHub
+            </label>
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none text-xs font-mono"
+                >github.com/</span
+              >
+              {{ form.github_url }}
+            </div>
+          </div>
 
-        <!-- LinkedIn URL -->
-        <div>
-          <label
-            for="{{ form.linkedin_url.id_for_label }}"
-            class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >LinkedIn Profile URL</label
-          >
-          {{ form.linkedin_url }}
-        </div>
+          <!-- LinkedIn -->
+          <div>
+            <label
+              for="{{ form.linkedin_url.id_for_label }}"
+              class="flex items-center gap-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-[#0077B5]"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                />
+              </svg>
+              LinkedIn
+            </label>
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none text-xs font-mono"
+                >linkedin.com/in/</span
+              >
+              {{ form.linkedin_url }}
+            </div>
+          </div>
 
-        <!-- Website URL -->
-        <div>
-          <label
-            for="{{ form.website_url.id_for_label }}"
-            class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >Personal Website URL</label
-          >
-          {{ form.website_url }}
-        </div>
+          <!-- Twitter / X -->
+          <div>
+            <label
+              for="{{ form.twitter_url.id_for_label }}"
+              class="flex items-center gap-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-gray-900 dark:text-white"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                />
+              </svg>
+              Twitter / X
+            </label>
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none text-xs font-mono"
+                >x.com/</span
+              >
+              {{ form.twitter_url }}
+            </div>
+          </div>
 
-        <!-- Phone -->
-        <div>
-          <label
-            for="{{ form.phone.id_for_label }}"
-            class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >Contact Phone</label
-          >
-          {{ form.phone }}
+          <!-- Instagram -->
+          <div>
+            <label
+              for="{{ form.instagram_url.id_for_label }}"
+              class="flex items-center gap-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-pink-500"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"
+                />
+              </svg>
+              Instagram
+            </label>
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none text-xs font-mono"
+                >instagram.com/</span
+              >
+              {{ form.instagram_url }}
+            </div>
+          </div>
+
+          <!-- Facebook -->
+          <div>
+            <label
+              for="{{ form.facebook_url.id_for_label }}"
+              class="flex items-center gap-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-[#1877F2]"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                />
+              </svg>
+              Facebook
+            </label>
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none text-xs font-mono"
+                >facebook.com/</span
+              >
+              {{ form.facebook_url }}
+            </div>
+          </div>
+
+          <!-- YouTube -->
+          <div>
+            <label
+              for="{{ form.youtube_url.id_for_label }}"
+              class="flex items-center gap-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-red-500"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                />
+              </svg>
+              YouTube
+            </label>
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none text-xs font-mono"
+                >youtube.com/</span
+              >
+              {{ form.youtube_url }}
+            </div>
+          </div>
+
+          <!-- TikTok -->
+          <div>
+            <label
+              for="{{ form.tiktok_url.id_for_label }}"
+              class="flex items-center gap-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-gray-900 dark:text-white"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"
+                />
+              </svg>
+              TikTok
+            </label>
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none text-xs font-mono"
+                >tiktok.com/@</span
+              >
+              {{ form.tiktok_url }}
+            </div>
+          </div>
+
+          <!-- Personal Website -->
+          <div>
+            <label
+              for="{{ form.website_url.id_for_label }}"
+              class="flex items-center gap-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-cyan-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <path
+                  d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                />
+              </svg>
+              Personal Website
+            </label>
+            {{ form.website_url }}
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label
+              for="{{ form.phone.id_for_label }}"
+              class="flex items-center gap-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-emerald-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 14a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 3.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10a16 16 0 0 0 6.05 6.05l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.5 17.5z"
+                />
+              </svg>
+              Contact Phone
+            </label>
+            {{ form.phone }}
+          </div>
         </div>
       </div>
 
@@ -193,4 +702,158 @@ action }} Client Portfolio{% endblock %} {% block dashboard_content %}
     </form>
   </div>
 </div>
+{% endblock %} {% block extra_head %}
+<style>
+  /* Hide the raw profile_image_url text input — we drive it via JS */
+  #{{ form.profile_image_url.id_for_label }} {
+    display: none !important;
+  }
+
+  /* Tab styling */
+  .img-tab {
+    color: #6b7280;
+    background: transparent;
+  }
+  .img-tab:hover {
+    color: #06b6d4;
+  }
+  .active-img-tab {
+    color: #06b6d4;
+    border-bottom: 2px solid #06b6d4;
+    background: rgba(6, 182, 212, 0.05);
+  }
+  .dark .img-tab { color: #9ca3af; }
+  .dark .img-tab:hover { color: #22d3ee; }
+  .dark .active-img-tab { color: #22d3ee; border-color: #22d3ee; background: rgba(34, 211, 238, 0.07); }
+</style>
+{% endblock %} {% block extra_js %}
+<script>
+  (function () {
+    // The hidden Django form field for profile_image_url
+    const urlField = document.getElementById(
+      "{{ form.profile_image_url.id_for_label }}",
+    );
+
+    // ── Tab switching ──────────────────────────────────────────────
+    function switchImageTab(tab) {
+      ["upload", "gallery"].forEach(function (t) {
+        document
+          .getElementById("panel-" + t)
+          .classList.toggle("hidden", t !== tab);
+        const btn = document.getElementById("tab-" + t);
+        btn.classList.toggle("active-img-tab", t === tab);
+      });
+    }
+    window.switchImageTab = switchImageTab;
+
+    // ── Set the profile_image_url value & show confirmation bar ───
+    function setImageUrl(url) {
+      urlField.value = url;
+      const bar = document.getElementById("current-image-bar");
+      if (url) {
+        document.getElementById("current-image-thumb").src = url;
+        document.getElementById("current-image-url-label").textContent =
+          url.length > 70 ? url.slice(0, 67) + "…" : url;
+        bar.classList.remove("hidden");
+      } else {
+        bar.classList.add("hidden");
+      }
+    }
+
+    // ── Gallery pick ───────────────────────────────────────────────
+    window.selectGalleryImage = function (btn) {
+      // Clear all selected states
+      document.querySelectorAll(".gallery-thumb").forEach(function (b) {
+        b.classList.remove("border-cyan-500");
+        b.classList.add("border-transparent");
+        b.querySelector(".gallery-check").classList.add("hidden");
+        b.querySelector(".gallery-check").classList.remove("flex");
+      });
+      // Mark chosen
+      btn.classList.remove("border-transparent");
+      btn.classList.add("border-cyan-500");
+      const chk = btn.querySelector(".gallery-check");
+      chk.classList.remove("hidden");
+      chk.classList.add("flex");
+
+      const url = btn.dataset.url;
+      setImageUrl(url);
+    };
+
+    // ── Local upload ───────────────────────────────────────────────
+    function previewLocalFile(file) {
+      if (!file || !file.type.startsWith("image/")) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("local-preview-img").src = e.target.result;
+        document.getElementById("local-preview-name").textContent = file.name;
+        document
+          .getElementById("local-preview-area")
+          .classList.remove("hidden");
+        // We set a blob/data URL here so the user can SEE a preview,
+        // but we keep the existing URL field value unless it was empty,
+        // so we don't accidentally wipe an already-saved Cloudinary URL.
+        // The user is warned to upload via File Manager to persist it.
+        // We do NOT set urlField.value to a local blob — it can't be saved.
+      };
+      reader.readAsDataURL(file);
+    }
+
+    window.handleLocalImageSelect = function (event) {
+      const file = event.target.files[0];
+      previewLocalFile(file);
+    };
+
+    window.handleImageDrop = function (event) {
+      event.preventDefault();
+      const dropZone = document.getElementById("upload-drop-zone");
+      dropZone.classList.remove("border-cyan-400", "bg-cyan-50");
+      const file = event.dataTransfer.files[0];
+      previewLocalFile(file);
+    };
+
+    window.clearLocalPreview = function () {
+      document.getElementById("local-preview-img").src = "";
+      document.getElementById("local-preview-name").textContent = "";
+      document.getElementById("local-preview-area").classList.add("hidden");
+      document.getElementById("local-image-input").value = "";
+    };
+
+    // ── Clear selection ────────────────────────────────────────────
+    window.clearSelectedImage = function () {
+      setImageUrl("");
+      clearLocalPreview();
+      // Also deselect any gallery thumb
+      document.querySelectorAll(".gallery-thumb").forEach(function (b) {
+        b.classList.remove("border-cyan-500");
+        b.classList.add("border-transparent");
+        const chk = b.querySelector(".gallery-check");
+        if (chk) {
+          chk.classList.add("hidden");
+          chk.classList.remove("flex");
+        }
+      });
+    };
+
+    // ── Init: restore state from existing value ────────────────────
+    (function init() {
+      const existingUrl = urlField ? urlField.value.trim() : "";
+      if (existingUrl) {
+        setImageUrl(existingUrl);
+        // If a gallery thumb matches the existing URL, highlight it
+        document.querySelectorAll(".gallery-thumb").forEach(function (b) {
+          if (b.dataset.url === existingUrl) {
+            b.classList.remove("border-transparent");
+            b.classList.add("border-cyan-500");
+            const chk = b.querySelector(".gallery-check");
+            if (chk) {
+              chk.classList.remove("hidden");
+              chk.classList.add("flex");
+            }
+          }
+        });
+      }
+    })();
+  })();
+</script>
 {% endblock %}

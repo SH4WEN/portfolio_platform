@@ -96,11 +96,11 @@
             <img
               src="{{ client.profile_image_url }}"
               alt="{{ client.name }}"
-              class="w-12 h-12 rounded-full object-cover border-2 border-cyan-500/30"
+              class="w-12 h-12 rounded-full object-cover bg-white border-2 border-cyan-400 shadow-md shadow-cyan-500/20 ring-2 ring-cyan-500/10"
             />
             {% else %}
             <div
-              class="w-12 h-12 rounded-full bg-cyan-500/10 text-cyan-400 font-bold text-base flex items-center justify-center border border-cyan-500/20"
+              class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white font-bold text-base flex items-center justify-center border-2 border-cyan-400 shadow-md shadow-cyan-500/20"
             >
               {{ client.name|slice:":2"|upper }}
             </div>

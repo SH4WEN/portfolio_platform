@@ -14,11 +14,11 @@
       <img
         src="{{ client.profile_image_url }}"
         alt="{{ client.name }}"
-        class="w-16 h-16 rounded-full object-cover border-2 border-cyan-500/40 shadow-md"
+        class="w-16 h-16 rounded-full object-cover bg-white border-2 border-cyan-400 shadow-lg shadow-cyan-500/20 ring-2 ring-cyan-500/10"
       />
       {% else %}
       <div
-        class="w-16 h-16 rounded-full bg-cyan-500/10 text-cyan-400 font-bold text-xl flex items-center justify-center border border-cyan-500/20 shadow-md"
+        class="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white font-bold text-xl flex items-center justify-center border-2 border-cyan-400 shadow-lg shadow-cyan-500/20"
       >
         {{ client.name|slice:":2"|upper }}
       </div>
@@ -106,15 +106,18 @@
   </div>
 
   <!-- Portfolio Share & Link Management Card -->
+  {% url 'portfolios:public_portfolio' slug=client.slug as portfolio_url %}
   <div
     class="bg-gradient-to-r from-gray-900 to-[#131926] rounded-2xl border border-gray-800 p-6 text-white shadow-xl space-y-4"
   >
-    <div class="flex items-center justify-between">
+    <div
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4"
+    >
       <h3 class="font-bold text-base flex items-center gap-2 text-cyan-400">
-        <i data-lucide="share-2" class="w-5 h-5"></i>
+        <i data-lucide="share-2" class="w-5 h-5 flex-shrink-0"></i>
         Public Portfolio Access & Sharing Links
       </h3>
-      <span class="text-xs text-gray-400"
+      <span class="text-xs text-gray-400 sm:text-right"
         >No client login required for public visitors</span
       >
     </div>
@@ -122,40 +125,43 @@
     <div
       class="bg-gray-950/80 p-4 rounded-xl border border-gray-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
     >
-      <div class="space-y-1 min-w-0 flex-1">
+      <div class="space-y-1 min-w-0 flex-1 w-full">
         <span
           class="text-[10px] uppercase font-semibold text-gray-400 tracking-wider"
           >Public URL</span
         >
         <p
           id="portfolio-full-url"
+          data-url="{{ request.scheme }}://{{ request.get_host }}{{ portfolio_url }}"
+          title="{{ request.scheme }}://{{ request.get_host }}{{ portfolio_url }}"
           class="font-mono text-sm text-cyan-300 truncate"
         >
-          {{ request.scheme }}://{{ request.get_host }}{% url
-          'portfolios:public_portfolio' slug=client.slug %}
+          {{ request.scheme }}://{{ request.get_host }}{{ portfolio_url }}
         </p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2 md:flex-nowrap">
         <button
           onclick="copyPortfolioUrlText()"
-          class="px-3.5 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg text-xs transition flex items-center gap-1.5 shadow-md shadow-cyan-500/20"
+          class="px-3.5 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold text-xs rounded-xl transition flex items-center gap-1.5 shadow-md shadow-cyan-500/20 whitespace-nowrap cursor-pointer"
         >
           <i data-lucide="copy" class="w-4 h-4"></i> Copy Link
         </button>
 
         <a
-          href="{% url 'portfolios:public_portfolio' slug=client.slug %}"
+          href="{{ portfolio_url }}"
           target="_blank"
-          class="px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold rounded-lg text-xs border border-gray-700 transition flex items-center gap-1.5"
+          rel="noopener"
+          class="px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold text-xs rounded-xl border border-gray-700 transition flex items-center gap-1.5 whitespace-nowrap"
         >
           <i data-lucide="external-link" class="w-4 h-4"></i> Open Portfolio
         </a>
 
         <a
-          href="{% url 'portfolios:public_portfolio' slug=client.slug %}?preview=true"
+          href="{{ portfolio_url }}?preview=true"
           target="_blank"
-          class="px-3.5 py-2 bg-purple-900/60 hover:bg-purple-800 text-purple-200 font-semibold rounded-lg text-xs border border-purple-700/60 transition flex items-center gap-1.5"
+          rel="noopener"
+          class="px-3.5 py-2 bg-purple-900/60 hover:bg-purple-800 text-purple-200 font-semibold text-xs rounded-xl border border-purple-700/60 transition flex items-center gap-1.5 whitespace-nowrap"
           title="Preview regardless of published status"
         >
           <i data-lucide="eye" class="w-4 h-4"></i> Staff Preview
@@ -163,7 +169,7 @@
 
         <button
           onclick="openQrModal()"
-          class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold rounded-lg text-xs border border-gray-700 transition flex items-center gap-1.5"
+          class="px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold text-xs rounded-xl border border-gray-700 transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
         >
           <i data-lucide="qr-code" class="w-4 h-4"></i> QR Code
         </button>
@@ -171,19 +177,19 @@
     </div>
 
     <!-- Social Share Quick Action Buttons -->
-    <div class="flex items-center gap-3 pt-2 text-xs">
-      <span class="text-gray-400 font-medium">Share Portfolio:</span>
+    <div class="flex flex-wrap items-center gap-2 pt-2 text-xs">
+      <span class="text-gray-400 font-medium mr-1">Share Portfolio:</span>
       <button
-        onclick="shareLinkedIn('{{ request.scheme }}://{{ request.get_host }}{% url 'portfolios:public_portfolio' slug=client.slug %}')"
-        class="px-2.5 py-1.5 bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white rounded-md border border-blue-500/30 transition flex items-center gap-1"
+        onclick="shareLinkedIn('{{ request.scheme }}://{{ request.get_host }}{{ portfolio_url }}')"
+        class="px-3.5 py-2 bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white font-semibold text-xs rounded-xl border border-blue-500/30 transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
       >
-        <i data-lucide="linkedin" class="w-3.5 h-3.5"></i> LinkedIn Share
+        <i data-lucide="linkedin" class="w-4 h-4"></i> LinkedIn Share
       </button>
       <button
-        onclick="shareFacebook('{{ request.scheme }}://{{ request.get_host }}{% url 'portfolios:public_portfolio' slug=client.slug %}')"
-        class="px-2.5 py-1.5 bg-blue-700/20 hover:bg-blue-700 text-blue-300 hover:text-white rounded-md border border-blue-600/30 transition flex items-center gap-1"
+        onclick="shareFacebook('{{ request.scheme }}://{{ request.get_host }}{{ portfolio_url }}')"
+        class="px-3.5 py-2 bg-blue-700/20 hover:bg-blue-700 text-blue-300 hover:text-white font-semibold text-xs rounded-xl border border-blue-600/30 transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
       >
-        <i data-lucide="facebook" class="w-3.5 h-3.5"></i> Facebook Share
+        <i data-lucide="facebook" class="w-4 h-4"></i> Facebook Share
       </button>
     </div>
   </div>
@@ -484,7 +490,10 @@
 
 <script>
   function copyPortfolioUrlText() {
-    const url = document.getElementById("portfolio-full-url").innerText.trim();
+    // Prefer the clean data-url attribute (immune to whitespace/truncation);
+    // fall back to visible text for safety.
+    const el = document.getElementById("portfolio-full-url");
+    const url = (el.dataset.url || el.innerText).trim();
     navigator.clipboard.writeText(url).then(() => {
       showToast("Portfolio link copied!", "success");
     });

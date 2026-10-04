@@ -91,9 +91,9 @@
                     <div class="py-3 flex items-center justify-between first:pt-0 last:pb-0">
                         <div class="flex items-center gap-3">
                             {% if client.profile_image_url %}
-                                <img src="{{ client.profile_image_url }}" alt="{{ client.name }}" class="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700">
+                                <img src="{{ client.profile_image_url }}" alt="{{ client.name }}" class="w-10 h-10 rounded-full object-cover bg-white border-2 border-cyan-400 shadow-md shadow-cyan-500/20 ring-2 ring-cyan-500/10">
                             {% else %}
-                                <div class="w-10 h-10 rounded-full bg-cyan-500/10 text-cyan-500 flex items-center justify-center font-bold text-sm">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-sm border-2 border-cyan-400 shadow-md shadow-cyan-500/20">
                                     {{ client.name|slice:":2"|upper }}
                                 </div>
                             {% endif %}

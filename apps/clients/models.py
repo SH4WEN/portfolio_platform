@@ -15,6 +15,11 @@ class Client(models.Model):
     github_url = models.URLField(max_length=500, blank=True, default='')
     linkedin_url = models.URLField(max_length=500, blank=True, default='')
     website_url = models.URLField(max_length=500, blank=True, default='')
+    twitter_url = models.URLField(max_length=500, blank=True, default='')
+    instagram_url = models.URLField(max_length=500, blank=True, default='')
+    facebook_url = models.URLField(max_length=500, blank=True, default='')
+    youtube_url = models.URLField(max_length=500, blank=True, default='')
+    tiktok_url = models.URLField(max_length=500, blank=True, default='')
     phone = models.CharField(max_length=50, blank=True, default='')
     location = models.CharField(max_length=255, blank=True, default='')
     
