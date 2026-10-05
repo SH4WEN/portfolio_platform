@@ -3,12 +3,28 @@ from django.utils.text import slugify
 from django.urls import reverse
 
 class Client(models.Model):
+    PORTFOLIO_STYLE_CHOICES = [
+        ('modern_dark', 'Modern Dark (Cyan / Cyberpunk)'),
+        ('executive_light', 'Executive Light (Navy / Slate Clean)'),
+        ('creative_gradient', 'Creative Glass (Purple & Emerald)'),
+        ('minimal_bento', 'Bento Grid (Dark / Amber & Charcoal)'),
+        ('terminal_retro', 'Terminal Hacker (Retro Monospace / Emerald)'),
+    ]
+
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
     email = models.EmailField()
     profession = models.CharField(max_length=255)
     headline = models.CharField(max_length=500)
     bio = models.TextField()
+    
+    # Portfolio layout style customization
+    portfolio_style = models.CharField(
+        max_length=50,
+        choices=PORTFOLIO_STYLE_CHOICES,
+        default='modern_dark',
+        help_text='Layout style & theme for public portfolio'
+    )
     
     # Profile media & social links
     profile_image_url = models.URLField(max_length=1000, blank=True, default='')
