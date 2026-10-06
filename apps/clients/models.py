@@ -11,18 +11,19 @@ class Client(models.Model):
         ('terminal_retro', 'Terminal Hacker (Retro Monospace / Emerald)'),
     ]
 
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True, default='')
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
-    email = models.EmailField()
-    profession = models.CharField(max_length=255)
-    headline = models.CharField(max_length=500)
-    bio = models.TextField()
+    email = models.EmailField(blank=True, default='')
+    profession = models.CharField(max_length=255, blank=True, default='')
+    headline = models.CharField(max_length=500, blank=True, default='')
+    bio = models.TextField(blank=True, default='')
     
     # Portfolio layout style customization
     portfolio_style = models.CharField(
         max_length=50,
         choices=PORTFOLIO_STYLE_CHOICES,
         default='modern_dark',
+        blank=True,
         help_text='Layout style & theme for public portfolio'
     )
     
@@ -40,7 +41,7 @@ class Client(models.Model):
     location = models.CharField(max_length=255, blank=True, default='')
     
     # Status & Timestamps
-    is_published = models.BooleanField(default=False, db_index=True)
+    is_published = models.BooleanField(default=False, blank=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

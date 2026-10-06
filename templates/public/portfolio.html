@@ -645,10 +645,10 @@
                 type="button"
                 id="save-contact-btn"
                 class="accent-btn px-6 py-3 font-semibold rounded-xl text-sm transition flex items-center gap-2"
-                title="Save {{ client.name }}'s contact info to this browser"
+                title="Download {{ client.name }}'s contact card (.vcf) to your device"
               >
-                <i data-lucide="save" class="w-4 h-4"></i>
-                Save Contact Info
+                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                Save Contact
               </button>
 
               {% if resumes %}
@@ -1110,9 +1110,9 @@
         if (typeof lucide !== "undefined") lucide.createIcons();
 
         // ── Save Contact Info ────────────────────────────────────────────
-        // Captures the client's name, email, phone, and social media links
-        // from the embedded JSON payload and stores them in the browser's
-        // localStorage under a per-client key for later retrieval.
+        // Builds a standards-compliant vCard 3.0 from the embedded JSON payload
+        // and triggers a native .vcf download. iOS, Android and macOS all open
+        // text/vcard files and import the entry into the device's Contacts app.
         const saveBtn = document.getElementById("save-contact-btn");
         const contactDataEl = document.getElementById("client-contact-data");
 
@@ -1124,47 +1124,120 @@
             console.error("Failed to parse client contact data:", err);
           }
 
-          saveBtn.addEventListener("click", function () {
-            if (!contactData || Object.keys(contactData).length === 0) return;
+          // Escape characters reserved by the vCard format (\ ; , newline).
+          function vcfText(value) {
+            return String(value == null ? "" : value)
+              .replace(/\\/g, "\\\\")
+              .replace(/;/g, "\\;")
+              .replace(/,/g, "\\,")
+              .replace(/\r?\n/g, "\\n");
+          }
 
-            try {
-              // Store one entry per client slug so multiple portfolios can
-              // coexist in the same browser without overwriting each other.
-              const key =
-                "portfolio_contact_" + (contactData.slug || "default");
-              const record = Object.assign({}, contactData, {
-                saved_at: new Date().toISOString(),
-              });
-              localStorage.setItem(key, JSON.stringify(record));
+          // Split a display name into { last, first } for the N property.
+          function splitName(full) {
+            const parts = String(full || "")
+              .trim()
+              .split(/\s+/)
+              .filter(Boolean);
+            if (parts.length <= 1) return { first: parts[0] || "", last: "" };
+            const last = parts.pop();
+            return { first: parts.join(" "), last: last };
+          }
 
-              // Also keep the most recently saved contact for easy access
-              // by the visitor or site administrator.
-              localStorage.setItem(
-                "portfolio_contact_last_saved",
-                JSON.stringify(record),
+          // Map our social-link keys to vCard X-SOCIALPROFILE type ids.
+          const socialTypes = {
+            github: "github",
+            linkedin: "linkedin",
+            twitter: "twitter",
+            instagram: "instagram",
+            facebook: "facebook",
+            youtube: "youtube",
+            tiktok: "tiktok",
+          };
+
+          function buildVCard(d) {
+            const name = splitName(d.name);
+            const lines = ["BEGIN:VCARD", "VERSION:3.0"];
+            lines.push(
+              "N:" + vcfText(name.last) + ";" + vcfText(name.first) + ";;;",
+            );
+            lines.push("FN:" + vcfText(d.name));
+            if (d.profession) lines.push("TITLE:" + vcfText(d.profession));
+            if (d.phone) lines.push("TEL;TYPE=CELL,VOICE:" + vcfText(d.phone));
+            if (d.email) lines.push("EMAIL;TYPE=INTERNET:" + vcfText(d.email));
+            if (d.location) {
+              // Place city/region in the locality component of the address.
+              lines.push("ADR;TYPE=HOME:;;" + vcfText(d.location) + ";;;;");
+            }
+            const links = d.social_links || {};
+            if (links.website) lines.push("URL:" + vcfText(links.website));
+            Object.keys(socialTypes).forEach(function (key) {
+              const url = links[key];
+              if (!url) return;
+              lines.push(
+                "X-SOCIALPROFILE;type=" + socialTypes[key] + ":" + vcfText(url),
               );
+            });
+            if (d.headline) lines.push("NOTE:" + vcfText(d.headline));
+            lines.push("REV:" + new Date().toISOString());
+            lines.push("END:VCARD");
+            // vCard requires CRLF line endings for maximum compatibility.
+            return lines.join("\r\n");
+          }
 
-              // Brief success feedback on the button itself.
-              const originalHtml = saveBtn.innerHTML;
-              saveBtn.innerHTML =
-                '<i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>' +
-                "<span>Contact Saved!</span>";
+          // Create a Blob from the vCard text and click a hidden <a download>.
+          function triggerDownload(content, filename) {
+            const blob = new Blob([content], {
+              type: "text/vcard;charset=utf-8",
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            a.rel = "noopener";
+            a.style.display = "none";
+            document.body.appendChild(a);
+            a.click();
+            // Revoke after the browser has begun the download.
+            setTimeout(function () {
+              URL.revokeObjectURL(url);
+              a.remove();
+            }, 1500);
+          }
+
+          // Brief, self-reverting success/error feedback on the button itself.
+          function showFeedback(ok) {
+            const originalHtml = saveBtn.innerHTML;
+            saveBtn.innerHTML = ok
+              ? '<i data-lucide="check" class="w-4 h-4"></i><span>Contact Downloaded!</span>'
+              : '<i data-lucide="alert-circle" class="w-4 h-4"></i><span>Download Failed</span>';
+            if (typeof lucide !== "undefined") lucide.createIcons();
+            saveBtn.disabled = true;
+            setTimeout(function () {
+              saveBtn.innerHTML = originalHtml;
               if (typeof lucide !== "undefined") lucide.createIcons();
-              saveBtn.disabled = true;
-              setTimeout(function () {
-                saveBtn.innerHTML = originalHtml;
-                if (typeof lucide !== "undefined") lucide.createIcons();
-                saveBtn.disabled = false;
-              }, 2000);
+              saveBtn.disabled = false;
+            }, 2200);
+          }
+
+          saveBtn.addEventListener("click", function () {
+            if (!contactData || !contactData.name) {
+              showFeedback(false);
+              return;
+            }
+            try {
+              const safeName = String(contactData.slug || contactData.name)
+                .replace(/[^a-z0-9]+/gi, "-")
+                .replace(/^-+|-+$/g, "")
+                .toLowerCase();
+              triggerDownload(
+                buildVCard(contactData),
+                (safeName || "contact") + ".vcf",
+              );
+              showFeedback(true);
             } catch (err) {
-              // localStorage may be unavailable (private mode / quota exceeded).
-              console.error(
-                "Failed to save contact info to localStorage:",
-                err,
-              );
-              alert(
-                "Could not save contact info. Your browser blocked local storage.",
-              );
+              console.error("Failed to generate vCard:", err);
+              showFeedback(false);
             }
           });
         }

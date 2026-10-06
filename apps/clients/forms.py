@@ -40,6 +40,12 @@ class ClientForm(forms.ModelForm):
             'is_published':      forms.CheckboxInput(attrs={'class': 'w-5 h-5 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500 bg-white dark:bg-gray-800 dark:border-gray-700'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Every field on the client form is optional — no submission requires input.
+        for field in self.fields.values():
+            field.required = False
+
     def _clean_social_url(self, field_name, base_url):
         val = self.cleaned_data.get(field_name, '').strip()
         if not val:

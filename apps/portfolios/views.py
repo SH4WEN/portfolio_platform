@@ -34,13 +34,17 @@ def public_portfolio_view(request, slug):
             skills_by_category[cat] = []
         skills_by_category[cat].append(skill)
 
-    # Contact payload consumed by the public template's "Save Contact Info"
-    # button (rendered via json_script and stored in the visitor's localStorage).
+    # Contact payload consumed by the public template's "Save Contact" button.
+    # Rendered via json_script and used on the client side to build a vCard
+    # (.vcf) that the visitor's device imports directly into its Contacts app.
     client_contact = {
         'slug': client.slug,
         'name': client.name,
         'email': client.email,
         'phone': client.phone,
+        'profession': client.profession,
+        'location': client.location,
+        'headline': client.headline,
         'social_links': {
             'github': client.github_url,
             'linkedin': client.linkedin_url,

@@ -1,7 +1,7 @@
 {% extends "dashboard/base_dashboard.html" %} {% block title %}{{ action }}
 Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
 <!--  -->
-{{ action }} Client Portfolio{% endblock %} 
+{{ action }} Client Portfolio{% endblock %}
 <!--  -->
 {% block dashboard_content %}
 <div class="max-w-4xl mx-auto space-y-6">
@@ -33,7 +33,7 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
           <label
             for="{{ form.name.id_for_label }}"
             class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >Client Full Name *</label
+            >Client Full Name</label
           >
           {{ form.name }} {% if form.name.errors %}
           <p class="text-xs text-red-500 mt-1">{{ form.name.errors.0 }}</p>
@@ -45,7 +45,7 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
           <label
             for="{{ form.email.id_for_label }}"
             class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >Email Address *</label
+            >Email Address</label
           >
           {{ form.email }} {% if form.email.errors %}
           <p class="text-xs text-red-500 mt-1">{{ form.email.errors.0 }}</p>
@@ -57,7 +57,7 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
           <label
             for="{{ form.profession.id_for_label }}"
             class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >Profession / Title *</label
+            >Profession / Title</label
           >
           {{ form.profession }} {% if form.profession.errors %}
           <p class="text-xs text-red-500 mt-1">
@@ -83,7 +83,7 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
           <label
             for="{{ form.headline.id_for_label }}"
             class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >Professional Headline *</label
+            >Professional Headline</label
           >
           {{ form.headline }} {% if form.headline.errors %}
           <p class="text-xs text-red-500 mt-1">{{ form.headline.errors.0 }}</p>
@@ -95,7 +95,7 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
           <label
             for="{{ form.bio.id_for_label }}"
             class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2"
-            >Biography & Summary *</label
+            >Biography & Summary</label
           >
           {{ form.bio }} {% if form.bio.errors %}
           <p class="text-xs text-red-500 mt-1">{{ form.bio.errors.0 }}</p>
@@ -111,14 +111,16 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
             Portfolio Layout & Visual Style Theme
           </label>
           <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            Choose a unique visual layout style for this client's public portfolio page:
+            Choose a unique visual layout style for this client's public
+            portfolio page:
           </p>
 
-          <div class="hidden">
-            {{ form.portfolio_style }}
-          </div>
+          <div class="hidden">{{ form.portfolio_style }}</div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5" id="style-cards-container">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5"
+            id="style-cards-container"
+          >
             <!-- 1. Modern Dark (Cyberpunk) -->
             <button
               type="button"
@@ -127,15 +129,28 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               class="style-choice-card text-left p-4 rounded-2xl border-2 transition relative overflow-hidden bg-[#0B0F17] text-white hover:border-cyan-400 focus:outline-none"
             >
               <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Cyberpunk</span>
-                <span class="check-icon hidden text-cyan-400 font-bold">✓ Active</span>
+                <span
+                  class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
+                  >Cyberpunk</span
+                >
+                <span class="check-icon hidden text-cyan-400 font-bold"
+                  >✓ Active</span
+                >
               </div>
               <h4 class="font-extrabold text-sm text-white">Modern Dark</h4>
-              <p class="text-[11px] text-gray-400 mt-1">Deep dark background with glowing cyan accents & glass elements.</p>
+              <p class="text-[11px] text-gray-400 mt-1">
+                Deep dark background with glowing cyan accents & glass elements.
+              </p>
               <div class="mt-3 flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-cyan-400 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-[#0B0F17] border border-gray-700 inline-block"></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-cyan-400 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-blue-500 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-[#0B0F17] border border-gray-700 inline-block"
+                ></span>
               </div>
             </button>
 
@@ -147,15 +162,31 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               class="style-choice-card text-left p-4 rounded-2xl border-2 transition relative overflow-hidden bg-slate-100 text-slate-900 hover:border-indigo-500 focus:outline-none"
             >
               <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">Executive</span>
-                <span class="check-icon hidden text-indigo-600 font-bold">✓ Active</span>
+                <span
+                  class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200"
+                  >Executive</span
+                >
+                <span class="check-icon hidden text-indigo-600 font-bold"
+                  >✓ Active</span
+                >
               </div>
-              <h4 class="font-extrabold text-sm text-slate-900">Executive Light</h4>
-              <p class="text-[11px] text-slate-600 mt-1">Clean slate light theme with sharp navy typography & indigo details.</p>
+              <h4 class="font-extrabold text-sm text-slate-900">
+                Executive Light
+              </h4>
+              <p class="text-[11px] text-slate-600 mt-1">
+                Clean slate light theme with sharp navy typography & indigo
+                details.
+              </p>
               <div class="mt-3 flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-indigo-600 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-slate-800 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-white border border-slate-300 inline-block"></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-indigo-600 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-slate-800 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-white border border-slate-300 inline-block"
+                ></span>
               </div>
             </button>
 
@@ -167,15 +198,29 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               class="style-choice-card text-left p-4 rounded-2xl border-2 transition relative overflow-hidden bg-[#090514] text-white hover:border-purple-400 focus:outline-none"
             >
               <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">Vibrant Glass</span>
-                <span class="check-icon hidden text-purple-400 font-bold">✓ Active</span>
+                <span
+                  class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                  >Vibrant Glass</span
+                >
+                <span class="check-icon hidden text-purple-400 font-bold"
+                  >✓ Active</span
+                >
               </div>
               <h4 class="font-extrabold text-sm text-white">Creative Glass</h4>
-              <p class="text-[11px] text-gray-400 mt-1">Vibrant purple & emerald gradient glows with frosted glass cards.</p>
+              <p class="text-[11px] text-gray-400 mt-1">
+                Vibrant purple & emerald gradient glows with frosted glass
+                cards.
+              </p>
               <div class="mt-3 flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-pink-500 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block"></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-purple-500 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-pink-500 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-emerald-400 inline-block"
+                ></span>
               </div>
             </button>
 
@@ -187,15 +232,31 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               class="style-choice-card text-left p-4 rounded-2xl border-2 transition relative overflow-hidden bg-[#121214] text-white hover:border-amber-400 focus:outline-none"
             >
               <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Bento Grid</span>
-                <span class="check-icon hidden text-amber-400 font-bold">✓ Active</span>
+                <span
+                  class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                  >Bento Grid</span
+                >
+                <span class="check-icon hidden text-amber-400 font-bold"
+                  >✓ Active</span
+                >
               </div>
-              <h4 class="font-extrabold text-sm text-white">Minimal Bento Grid</h4>
-              <p class="text-[11px] text-gray-400 mt-1">Structured bento-box grid with warm gold accents & sharp dark cards.</p>
+              <h4 class="font-extrabold text-sm text-white">
+                Minimal Bento Grid
+              </h4>
+              <p class="text-[11px] text-gray-400 mt-1">
+                Structured bento-box grid with warm gold accents & sharp dark
+                cards.
+              </p>
               <div class="mt-3 flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-neutral-700 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-[#121214] border border-neutral-700 inline-block"></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-amber-400 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-neutral-700 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-[#121214] border border-neutral-700 inline-block"
+                ></span>
               </div>
             </button>
 
@@ -207,20 +268,37 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               class="style-choice-card text-left p-4 rounded-2xl border-2 transition relative overflow-hidden bg-black text-emerald-400 hover:border-emerald-400 focus:outline-none font-mono"
             >
               <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">Hacker CLI</span>
-                <span class="check-icon hidden text-emerald-400 font-bold">✓ Active</span>
+                <span
+                  class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800"
+                  >Hacker CLI</span
+                >
+                <span class="check-icon hidden text-emerald-400 font-bold"
+                  >✓ Active</span
+                >
               </div>
-              <h4 class="font-extrabold text-sm text-emerald-300">&gt; Terminal_Retro</h4>
-              <p class="text-[11px] text-emerald-600 mt-1 font-sans">Retro monospace terminal aesthetic with emerald green prompts.</p>
+              <h4 class="font-extrabold text-sm text-emerald-300">
+                &gt; Terminal_Retro
+              </h4>
+              <p class="text-[11px] text-emerald-600 mt-1 font-sans">
+                Retro monospace terminal aesthetic with emerald green prompts.
+              </p>
               <div class="mt-3 flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-emerald-950 border border-emerald-500 inline-block"></span>
-                <span class="w-3 h-3 rounded-full bg-black border border-emerald-700 inline-block"></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-emerald-400 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-emerald-950 border border-emerald-500 inline-block"
+                ></span>
+                <span
+                  class="w-3 h-3 rounded-full bg-black border border-emerald-700 inline-block"
+                ></span>
               </div>
             </button>
           </div>
           {% if form.portfolio_style.errors %}
-          <p class="text-xs text-red-500 mt-1">{{ form.portfolio_style.errors.0 }}</p>
+          <p class="text-xs text-red-500 mt-1">
+            {{ form.portfolio_style.errors.0 }}
+          </p>
           {% endif %}
         </div>
 
@@ -573,9 +651,10 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               </svg>
               GitHub
             </label>
-            {{ form.github_url }}
-            {% if form.github_url.errors %}
-            <p class="text-xs text-red-500 mt-1">{{ form.github_url.errors.0 }}</p>
+            {{ form.github_url }} {% if form.github_url.errors %}
+            <p class="text-xs text-red-500 mt-1">
+              {{ form.github_url.errors.0 }}
+            </p>
             {% endif %}
           </div>
 
@@ -596,9 +675,10 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               </svg>
               LinkedIn
             </label>
-            {{ form.linkedin_url }}
-            {% if form.linkedin_url.errors %}
-            <p class="text-xs text-red-500 mt-1">{{ form.linkedin_url.errors.0 }}</p>
+            {{ form.linkedin_url }} {% if form.linkedin_url.errors %}
+            <p class="text-xs text-red-500 mt-1">
+              {{ form.linkedin_url.errors.0 }}
+            </p>
             {% endif %}
           </div>
 
@@ -619,9 +699,10 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               </svg>
               Twitter / X
             </label>
-            {{ form.twitter_url }}
-            {% if form.twitter_url.errors %}
-            <p class="text-xs text-red-500 mt-1">{{ form.twitter_url.errors.0 }}</p>
+            {{ form.twitter_url }} {% if form.twitter_url.errors %}
+            <p class="text-xs text-red-500 mt-1">
+              {{ form.twitter_url.errors.0 }}
+            </p>
             {% endif %}
           </div>
 
@@ -642,9 +723,10 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               </svg>
               Instagram
             </label>
-            {{ form.instagram_url }}
-            {% if form.instagram_url.errors %}
-            <p class="text-xs text-red-500 mt-1">{{ form.instagram_url.errors.0 }}</p>
+            {{ form.instagram_url }} {% if form.instagram_url.errors %}
+            <p class="text-xs text-red-500 mt-1">
+              {{ form.instagram_url.errors.0 }}
+            </p>
             {% endif %}
           </div>
 
@@ -665,9 +747,10 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               </svg>
               Facebook
             </label>
-            {{ form.facebook_url }}
-            {% if form.facebook_url.errors %}
-            <p class="text-xs text-red-500 mt-1">{{ form.facebook_url.errors.0 }}</p>
+            {{ form.facebook_url }} {% if form.facebook_url.errors %}
+            <p class="text-xs text-red-500 mt-1">
+              {{ form.facebook_url.errors.0 }}
+            </p>
             {% endif %}
           </div>
 
@@ -688,9 +771,10 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               </svg>
               YouTube
             </label>
-            {{ form.youtube_url }}
-            {% if form.youtube_url.errors %}
-            <p class="text-xs text-red-500 mt-1">{{ form.youtube_url.errors.0 }}</p>
+            {{ form.youtube_url }} {% if form.youtube_url.errors %}
+            <p class="text-xs text-red-500 mt-1">
+              {{ form.youtube_url.errors.0 }}
+            </p>
             {% endif %}
           </div>
 
@@ -711,9 +795,10 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               </svg>
               TikTok
             </label>
-            {{ form.tiktok_url }}
-            {% if form.tiktok_url.errors %}
-            <p class="text-xs text-red-500 mt-1">{{ form.tiktok_url.errors.0 }}</p>
+            {{ form.tiktok_url }} {% if form.tiktok_url.errors %}
+            <p class="text-xs text-red-500 mt-1">
+              {{ form.tiktok_url.errors.0 }}
+            </p>
             {% endif %}
           </div>
 
@@ -738,9 +823,10 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               </svg>
               Personal Website
             </label>
-            {{ form.website_url }}
-            {% if form.website_url.errors %}
-            <p class="text-xs text-red-500 mt-1">{{ form.website_url.errors.0 }}</p>
+            {{ form.website_url }} {% if form.website_url.errors %}
+            <p class="text-xs text-red-500 mt-1">
+              {{ form.website_url.errors.0 }}
+            </p>
             {% endif %}
           </div>
 
@@ -765,8 +851,7 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
               </svg>
               Contact Phone
             </label>
-            {{ form.phone }}
-            {% if form.phone.errors %}
+            {{ form.phone }} {% if form.phone.errors %}
             <p class="text-xs text-red-500 mt-1">{{ form.phone.errors.0 }}</p>
             {% endif %}
           </div>
@@ -849,21 +934,36 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
     );
 
     // ── Portfolio Layout Style Picker ──────────────────────────────
-    window.selectPortfolioStyle = function(val) {
+    window.selectPortfolioStyle = function (val) {
       if (styleField) {
         styleField.value = val;
       }
-      document.querySelectorAll('.style-choice-card').forEach(function(card) {
+      document.querySelectorAll(".style-choice-card").forEach(function (card) {
         const isMatch = card.dataset.styleVal === val;
-        card.classList.toggle('ring-4', isMatch);
-        card.classList.toggle('ring-cyan-500/50', isMatch && val === 'modern_dark');
-        card.classList.toggle('ring-indigo-500/50', isMatch && val === 'executive_light');
-        card.classList.toggle('ring-purple-500/50', isMatch && val === 'creative_gradient');
-        card.classList.toggle('ring-amber-500/50', isMatch && val === 'minimal_bento');
-        card.classList.toggle('ring-emerald-500/50', isMatch && val === 'terminal_retro');
-        
-        const chk = card.querySelector('.check-icon');
-        if (chk) chk.classList.toggle('hidden', !isMatch);
+        card.classList.toggle("ring-4", isMatch);
+        card.classList.toggle(
+          "ring-cyan-500/50",
+          isMatch && val === "modern_dark",
+        );
+        card.classList.toggle(
+          "ring-indigo-500/50",
+          isMatch && val === "executive_light",
+        );
+        card.classList.toggle(
+          "ring-purple-500/50",
+          isMatch && val === "creative_gradient",
+        );
+        card.classList.toggle(
+          "ring-amber-500/50",
+          isMatch && val === "minimal_bento",
+        );
+        card.classList.toggle(
+          "ring-emerald-500/50",
+          isMatch && val === "terminal_retro",
+        );
+
+        const chk = card.querySelector(".check-icon");
+        if (chk) chk.classList.toggle("hidden", !isMatch);
       });
     };
 
@@ -970,7 +1070,9 @@ Client Portfolio | Portfolio Platform{% endblock %} {% block header_title %}
 
     // ── Init: restore state from existing value ────────────────────
     (function init() {
-      const currentStyle = styleField ? (styleField.value || 'modern_dark') : 'modern_dark';
+      const currentStyle = styleField
+        ? styleField.value || "modern_dark"
+        : "modern_dark";
       selectPortfolioStyle(currentStyle);
 
       const existingUrl = urlField ? urlField.value.trim() : "";
